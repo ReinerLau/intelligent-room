@@ -19,7 +19,7 @@ onMounted(() => {
   // container.value.appendChild(stats.dom)
 
   const renderer = new THREE.WebGLRenderer()
-  renderer.setPixelRatio(window.devicePixelRatio)
+  // renderer.setPixelRatio(window.devicePixelRatio)
   renderer.setSize(window.innerWidth, window.innerHeight)
   renderer.outputEncoding = THREE.sRGBEncoding
   if (container.value) {
