@@ -1,85 +1,95 @@
 <script setup lang="ts">
-import { RouterLink, RouterView } from 'vue-router'
-import HelloWorld from './components/HelloWorld.vue'
+import { onMounted, ref } from 'vue'
+import type { Ref } from 'vue'
+import * as THREE from 'three'
+// import Stats from 'three/examples/jsm/libs/stats.module.js'
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
+import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js'
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
+import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js'
+
+const container: Ref<HTMLElement | null> = ref(null)
+
+onMounted(() => {
+  let mixer: THREE.AnimationMixer
+
+  const clock = new THREE.Clock()
+
+  // const stats = new Stats()
+  // container.value.appendChild(stats.dom)
+
+  const renderer = new THREE.WebGLRenderer({ antialias: true })
+  renderer.setPixelRatio(window.devicePixelRatio)
+  renderer.setSize(window.innerWidth, window.innerHeight)
+  renderer.outputEncoding = THREE.sRGBEncoding
+  if (container.value) {
+    container.value.appendChild(renderer.domElement)
+  }
+
+  const pmremGenerator = new THREE.PMREMGenerator(renderer)
+
+  const scene = new THREE.Scene()
+  scene.background = new THREE.Color(0xbfe3dd)
+  scene.environment = pmremGenerator.fromScene(new RoomEnvironment(), 0.04).texture
+
+  const camera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight, 1, 100)
+  camera.position.set(5, 2, 8)
+
+  const controls = new OrbitControls(camera, renderer.domElement)
+  controls.target.set(0, 0.5, 0)
+  controls.update()
+  controls.enablePan = false
+  controls.enableDamping = true
+
+  const dracoLoader = new DRACOLoader()
+  dracoLoader.setDecoderPath('/gltf/')
+
+  const loader = new GLTFLoader()
+  loader.setDRACOLoader(dracoLoader)
+  loader.load(
+    '/LittlestTokyo.glb',
+    function (gltf) {
+      const model = gltf.scene
+      model.position.set(1, 1, 0)
+      model.scale.set(0.01, 0.01, 0.01)
+      scene.add(model)
+
+      mixer = new THREE.AnimationMixer(model)
+      mixer.clipAction(gltf.animations[0]).play()
+
+      animate()
+    },
+    undefined,
+    function (e) {
+      console.error(e)
+    }
+  )
+
+  window.onresize = function () {
+    camera.aspect = window.innerWidth / window.innerHeight
+    camera.updateProjectionMatrix()
+
+    renderer.setSize(window.innerWidth, window.innerHeight)
+  }
+
+  function animate() {
+    requestAnimationFrame(animate)
+
+    const delta = clock.getDelta()
+
+    mixer.update(delta)
+
+    controls.update()
+
+    // stats.update()
+
+    renderer.render(scene, camera)
+  }
+})
 </script>
 
 <template>
-  <header>
-    <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" />
-
-    <div class="wrapper">
-      <HelloWorld msg="You did it!" />
-
-      <nav>
-        <RouterLink to="/">Home</RouterLink>
-        <RouterLink to="/about">About</RouterLink>
-      </nav>
-    </div>
-  </header>
-
-  <RouterView />
+  <div ref="container"></div>
 </template>
 
-<style scoped>
-header {
-  line-height: 1.5;
-  max-height: 100vh;
-}
-
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
-}
-
-nav {
-  width: 100%;
-  font-size: 12px;
-  text-align: center;
-  margin-top: 2rem;
-}
-
-nav a.router-link-exact-active {
-  color: var(--color-text);
-}
-
-nav a.router-link-exact-active:hover {
-  background-color: transparent;
-}
-
-nav a {
-  display: inline-block;
-  padding: 0 1rem;
-  border-left: 1px solid var(--color-border);
-}
-
-nav a:first-of-type {
-  border: 0;
-}
-
-@media (min-width: 1024px) {
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
-  }
-
-  .logo {
-    margin: 0 2rem 0 0;
-  }
-
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
-
-  nav {
-    text-align: left;
-    margin-left: -1rem;
-    font-size: 1rem;
-
-    padding: 1rem 0;
-    margin-top: 1rem;
-  }
-}
-</style>
+<style scoped></style>
