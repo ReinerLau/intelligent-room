@@ -13,7 +13,7 @@ const container: Ref<HTMLElement | null> = ref(null)
 onMounted(() => {
   // let mixer: THREE.AnimationMixer
 
-  const clock = new THREE.Clock()
+  // const clock = new THREE.Clock()
 
   // const stats = new Stats()
   // container.value.appendChild(stats.dom)
@@ -75,7 +75,7 @@ onMounted(() => {
   function animate() {
     requestAnimationFrame(animate)
 
-    const delta = clock.getDelta()
+    // const delta = clock.getDelta()
 
     // mixer.update(delta)
 
