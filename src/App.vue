@@ -44,6 +44,25 @@ onMounted(() => {
   )
   composer.addPass(outlinePass)
 
+  const raycaster = new THREE.Raycaster()
+  const mouse = new THREE.Vector2()
+  renderer.domElement.addEventListener('pointermove', onPointerMove)
+
+  function onPointerMove(event: MouseEvent) {
+    event.preventDefault()
+    mouse.x = (event.clientX / window.innerWidth) * 2 - 1
+    mouse.y = -(event.clientY / window.innerHeight) * 2 + 1
+
+    raycaster.setFromCamera(mouse, camera)
+    const intersects = raycaster.intersectObject(scene, true)
+    if (intersects.length > 0) {
+      const selectedObject = intersects[0].object
+      outlinePass.selectedObjects = [selectedObject]
+    } else {
+      outlinePass.selectedObjects = []
+    }
+  }
+
   const loader = new GLTFLoader()
   loader.load(
     '/flying_circus_dae_game_art_assignment/scene.gltf',
