@@ -11,9 +11,9 @@ import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js'
 const container: Ref<HTMLElement | null> = ref(null)
 
 onMounted(() => {
-  // let mixer: THREE.AnimationMixer
+  let mixer: THREE.AnimationMixer
 
-  // const clock = new THREE.Clock()
+  const clock = new THREE.Clock()
 
   // const stats = new Stats()
   // container.value.appendChild(stats.dom)
@@ -55,8 +55,8 @@ onMounted(() => {
       // model.scale.set(0.01, 0.01, 0.01)
       scene.add(model)
 
-      // mixer = new THREE.AnimationMixer(model)
-      // mixer.clipAction(gltf.animations[0]).play()
+      mixer = new THREE.AnimationMixer(model)
+      mixer.clipAction(gltf.animations[0]).play()
 
       animate()
     },
@@ -76,9 +76,9 @@ onMounted(() => {
   function animate() {
     requestAnimationFrame(animate)
 
-    // const delta = clock.getDelta()
+    const delta = clock.getDelta()
 
-    // mixer.update(delta)
+    mixer.update(delta)
 
     controls.update()
 
