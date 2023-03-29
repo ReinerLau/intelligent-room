@@ -13,6 +13,8 @@ const container: Ref<HTMLElement | null> = ref(null)
 
 onMounted(() => {
   let mixer: THREE.AnimationMixer
+  let animationsStatus = false
+  let animations: THREE.AnimationClip[] = []
 
   const clock = new THREE.Clock()
 
@@ -47,6 +49,17 @@ onMounted(() => {
   const raycaster = new THREE.Raycaster()
   const mouse = new THREE.Vector2()
   renderer.domElement.addEventListener('pointermove', onPointerMove)
+  renderer.domElement.addEventListener('click', onPointerClick)
+
+  function onPointerClick(event: MouseEvent) {
+    event.preventDefault()
+    const intersects = raycaster.intersectObject(scene, true)
+    if (intersects.length > 0) {
+      const action = mixer.clipAction(animations[0])
+      animationsStatus ? action.setEffectiveTimeScale(0) : action.play().setEffectiveTimeScale(1)
+      animationsStatus = !animationsStatus
+    }
+  }
 
   function onPointerMove(event: MouseEvent) {
     event.preventDefault()
@@ -68,11 +81,10 @@ onMounted(() => {
     '/flying_circus_dae_game_art_assignment/scene.gltf',
     function (gltf) {
       const model = gltf.scene
+      animations = gltf.animations
       scene.add(model)
-      outlinePass.selectedObjects = [model]
 
       mixer = new THREE.AnimationMixer(model)
-      mixer.clipAction(gltf.animations[0]).play()
 
       animate()
     },
