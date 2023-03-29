@@ -15,6 +15,7 @@ onMounted(() => {
   let mixer: THREE.AnimationMixer
   let animationsStatus = false
   let animations: THREE.AnimationClip[] = []
+  let focusing = false
 
   const clock = new THREE.Clock()
 
@@ -55,6 +56,7 @@ onMounted(() => {
     event.preventDefault()
     const intersects = raycaster.intersectObject(scene, true)
     if (intersects.length > 0) {
+      focusing = true
       const action = mixer.clipAction(animations[0])
       animationsStatus ? action.setEffectiveTimeScale(0) : action.play().setEffectiveTimeScale(1)
       animationsStatus = !animationsStatus
@@ -107,6 +109,15 @@ onMounted(() => {
     const delta = clock.getDelta()
 
     mixer.update(delta)
+
+    const v = new THREE.Vector3(5, 2, 8)
+    if (focusing) {
+      camera.position.lerp(v, 0.05)
+
+      if (camera.position.distanceTo(v) < 0.1) {
+        focusing = false
+      }
+    }
 
     controls.update()
 
