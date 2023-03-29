@@ -5,6 +5,9 @@ import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
+import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js'
+import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js'
+import { OutlinePass } from 'three/examples/jsm/postprocessing/OutlinePass.js'
 
 const container: Ref<HTMLElement | null> = ref(null)
 
@@ -32,12 +35,22 @@ onMounted(() => {
   controls.target.set(0, 0.5, 0)
   controls.update()
 
+  const composer = new EffectComposer(renderer)
+  composer.addPass(new RenderPass(scene, camera))
+  const outlinePass = new OutlinePass(
+    new THREE.Vector2(window.innerWidth, window.innerHeight),
+    scene,
+    camera
+  )
+  composer.addPass(outlinePass)
+
   const loader = new GLTFLoader()
   loader.load(
     '/flying_circus_dae_game_art_assignment/scene.gltf',
     function (gltf) {
       const model = gltf.scene
       scene.add(model)
+      outlinePass.selectedObjects = [model]
 
       mixer = new THREE.AnimationMixer(model)
       mixer.clipAction(gltf.animations[0]).play()
@@ -66,7 +79,8 @@ onMounted(() => {
 
     controls.update()
 
-    renderer.render(scene, camera)
+    // renderer.render(scene, camera)
+    composer.render()
   }
 })
 </script>
