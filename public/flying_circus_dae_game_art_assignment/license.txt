@@ -1,0 +1,11 @@
+Model Information:
+* title:	Flying Circus [DAE Game Art Assignment]
+* source:	https://sketchfab.com/3d-models/flying-circus-dae-game-art-assignment-0f7b989c60df444aa4cef86e059cc166
+* author:	Jan Neubauer (https://sketchfab.com/jn.neubauer)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Flying Circus [DAE Game Art Assignment]" (https://sketchfab.com/3d-models/flying-circus-dae-game-art-assignment-0f7b989c60df444aa4cef86e059cc166) by Jan Neubauer (https://sketchfab.com/jn.neubauer) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)

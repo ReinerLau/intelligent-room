@@ -41,17 +41,18 @@ onMounted(() => {
   // controls.enablePan = false
   // controls.enableDamping = true
 
-  const dracoLoader = new DRACOLoader()
-  dracoLoader.setDecoderPath('/gltf/')
+  // const dracoLoader = new DRACOLoader()
+  // dracoLoader.setDecoderPath('/gltf/')
 
   const loader = new GLTFLoader()
-  loader.setDRACOLoader(dracoLoader)
+  // loader.setDRACOLoader(dracoLoader)
   loader.load(
-    '/LittlestTokyo.glb',
+    // '/LittlestTokyo.glb',
+    '/flying_circus_dae_game_art_assignment/scene.gltf',
     function (gltf) {
       const model = gltf.scene
-      model.position.set(1, 1, 0)
-      model.scale.set(0.01, 0.01, 0.01)
+      // model.position.set(1, 1, 0)
+      // model.scale.set(0.01, 0.01, 0.01)
       scene.add(model)
 
       // mixer = new THREE.AnimationMixer(model)
