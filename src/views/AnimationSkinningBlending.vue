@@ -1,5 +1,6 @@
-<script setup>
+<script setup lang="ts">
 import { ref, onMounted } from 'vue'
+import type { Ref } from 'vue'
 import * as THREE from 'three'
 
 import Stats from 'three/examples/jsm/libs/stats.module.js'
@@ -10,7 +11,7 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 let scene, renderer, camera, stats
 let model, skeleton, mixer, clock
 
-const crossFadeControls = []
+const crossFadeControls: any[] = []
 
 let idleAction, walkAction, runAction
 let idleWeight, walkWeight, runWeight
@@ -19,27 +20,32 @@ let actions, settings
 let singleStepMode = false
 let sizeOfNextStep = 0
 
-const container = ref(null)
+const container: Ref<HTMLElement | null> = ref(null)
 
 onMounted(() => {
   init()
 })
 
 function init() {
+  // 摄像机
   camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 1000)
   camera.position.set(1, 2, -3)
   camera.lookAt(0, 1, 0)
 
+  // 时钟，要计算开始到现在要经过的时间，动画要用
   clock = new THREE.Clock()
 
+  // 背景
   scene = new THREE.Scene()
   scene.background = new THREE.Color(0xa0a0a0)
   scene.fog = new THREE.Fog(0xa0a0a0, 10, 50)
 
+  // 背景光源
   const hemiLight = new THREE.HemisphereLight(0xffffff, 0x444444)
   hemiLight.position.set(0, 20, 0)
   scene.add(hemiLight)
 
+  // 创造影子的光源
   const dirLight = new THREE.DirectionalLight(0xffffff)
   dirLight.position.set(-3, 10, -10)
   dirLight.castShadow = true
@@ -51,6 +57,7 @@ function init() {
   dirLight.shadow.camera.far = 40
   scene.add(dirLight)
 
+  // 地板
   const mesh = new THREE.Mesh(
     new THREE.PlaneGeometry(100, 100),
     new THREE.MeshPhongMaterial({ color: 0x999999, depthWrite: false })
@@ -59,33 +66,35 @@ function init() {
   mesh.receiveShadow = true
   scene.add(mesh)
 
+  // 加载模型
   const loader = new GLTFLoader()
   loader.load('/Soldier.glb', function (gltf) {
     model = gltf.scene
     scene.add(model)
 
+    // 生成影子
     model.traverse(function (object) {
       if (object.isMesh) object.castShadow = true
     })
 
+    // 骨骼
     skeleton = new THREE.SkeletonHelper(model)
     skeleton.visible = false
     scene.add(skeleton)
 
+    // 创建控制面板
     createPanel()
 
+    // 动画相关
     const animations = gltf.animations
-
     mixer = new THREE.AnimationMixer(model)
-
     idleAction = mixer.clipAction(animations[0])
     walkAction = mixer.clipAction(animations[3])
     runAction = mixer.clipAction(animations[1])
-
     actions = [idleAction, walkAction, runAction]
-
     activateAllActions()
 
+    // 逐帧渲染
     animate()
   })
 
