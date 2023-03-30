@@ -50,7 +50,7 @@ onMounted(() => {
   const raycaster = new THREE.Raycaster()
   const mouse = new THREE.Vector2()
   renderer.domElement.addEventListener('pointermove', onPointerMove)
-  renderer.domElement.addEventListener('click', onPointerClick)
+  renderer.domElement.addEventListener('dblclick', onPointerClick)
 
   function onPointerClick(event: MouseEvent) {
     event.preventDefault()
